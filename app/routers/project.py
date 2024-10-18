@@ -6,41 +6,72 @@ from crud.project import create_project, get_projects_by_user
 from schemas.project import ProjectCreate, Project
 from typing import List
 from models.project import Project as ProjectModel
-from schemas.project import ProjectCreate
 
 router = APIRouter()
 
-
-# @router.post("/projects/", response_model=Project)
-# def create_new_project(project: ProjectCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-#     return create_project(db=db, project=project, user_id=current_user.id)
-
-
-# @router.get("/projects/", response_model=List[Project])
-# def read_user_projects(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-#     projects = get_projects_by_user(db=db, user_id=current_user.id)
-#     if not projects:
-#         raise HTTPException(status_code=404, detail="Projects not found")
-#     return projects
+# Crear un nuevo proyecto
 
 
 @router.post("/", response_model=Project)
 def create_new_project(project: ProjectCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return create_project(db=db, project=project, user_id=current_user.id)
+    new_project = Project(
+        name=project.name,
+        description=project.description,  # Nuevo campo agregado
+        user_id=current_user.id,
+        project_data=project.project_data  # Opcional
+    )
+    db.add(new_project)
+    db.commit()
+    db.refresh(new_project)
+    return new_project
+
+
+# Leer todos los proyectos del usuario actual
 
 
 @router.get("/", response_model=List[Project])
 def read_user_projects(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    projects = get_projects_by_user(db=db, user_id=current_user.id)
+    projects = db.query(ProjectModel).filter(
+        ProjectModel.user_id == current_user.id).all()
     return projects
 
+# Leer un proyecto específico por ID
 
-def update_project(db: Session, project_id: int, project_data: ProjectCreate):
+
+@router.get("/{project_id}", response_model=Project)
+def read_project(project_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     project = db.query(ProjectModel).filter(
-        ProjectModel.id == project_id).first()
-    if project:
-        project.name = project_data.name
-        project.project_data = project_data.project_data
-        db.commit()
-        db.refresh(project)
+        ProjectModel.id == project_id, ProjectModel.user_id == current_user.id).first()
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+# Actualizar un proyecto existente
+
+
+@router.put("/{project_id}", response_model=Project)
+def update_project(project_id: int, updated_project: ProjectCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    project = db.query(ProjectModel).filter(
+        ProjectModel.id == project_id, ProjectModel.user_id == current_user.id).first()
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    project.name = updated_project.name
+    project.description = updated_project.description
+    db.commit()
+    db.refresh(project)
+    return project
+
+# Eliminar un proyecto existente
+
+
+@router.delete("/{project_id}", response_model=Project)
+def delete_project(project_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    project = db.query(ProjectModel).filter(
+        ProjectModel.id == project_id, ProjectModel.user_id == current_user.id).first()
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    db.delete(project)
+    db.commit()
     return project

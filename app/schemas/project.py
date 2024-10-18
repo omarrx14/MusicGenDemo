@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Any, Optional
 
 
 class ProjectBase(BaseModel):
@@ -17,3 +17,10 @@ class Project(ProjectBase):
 
     class Config:
         orm_mode = True
+
+
+class ProjectCreate(BaseModel):
+    name: str
+    description: Optional[str] = None  # Descripción opcional
+    # Datos adicionales del proyecto opcionales
+    project_data: Optional[Any] = None
