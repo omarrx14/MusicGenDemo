@@ -11,8 +11,7 @@ app.add_middleware(
         "http://localhost:5173",  # En desarrollo local
         # Dominio principal en producción (Vercel)
         "https://music-app-frontend-pc8g.vercel.app",
-        "https://music-app-frontend-pc8g-3zhtbk91n-omars-projects-b5a3697e.vercel.app",
-        "https://music-gen-demo-omarrx14.replit.app/"  # Subdominio temporal en Vercel
+        "musicgendemo.onrender.com"  # Subdominio temporal en Vercel
     ],
     allow_credentials=True,
     # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
