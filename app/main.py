@@ -9,7 +9,6 @@ app.add_middleware(
     allow_origins=[
         # URL de producción del frontend en Vercel
         "https://music-app-frontend-pc8g.vercel.app",
-        "https://music-app-frontend-pc8g-5x5jpup4y-omars-projects-b5a3697e.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
