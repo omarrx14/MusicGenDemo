@@ -1,6 +1,11 @@
+import os
 from fastapi import FastAPI
 from routers import user, project
 from fastapi.middleware.cors import CORSMiddleware
+
+if os.getenv("ENV") == "production":  # Solo en producción
+    from run_migrations import run_migrations
+    run_migrations()
 
 app = FastAPI()
 
