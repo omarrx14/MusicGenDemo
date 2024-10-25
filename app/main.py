@@ -2,9 +2,8 @@ import os
 from alembic.config import Config
 from alembic import command
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from routers import user, project
-
+from starlette.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 
@@ -13,7 +12,7 @@ def run_migrations():
     command.upgrade(alembic_cfg, "head")
 
 
-@app.on_event("startup")
+@app.lifespan("startup")
 async def startup_event():
     run_migrations()
 
