@@ -12,6 +12,7 @@ app.add_middleware(
         # Dominio principal en producción (Vercel)
         "https://music-app-frontend-pc8g.vercel.app",
         "https://music-gen-demo.vercel.app",  # Subdominio temporal en Vercel
+        "https://music-app-frontend-pc8g-ciautrm86-omars-projects-b5a3697e.vercel.app"
     ],
     allow_credentials=True,
     # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
