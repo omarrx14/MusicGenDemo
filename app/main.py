@@ -11,7 +11,8 @@ app.add_middleware(
         "http://localhost:5173",
         "https://music-app-frontend-pc8g.vercel.app",
         "https://music-gen-demo.vercel.app",
-        "https://music-app-frontend-pc8g-ciautrm86-omars-projects-b5a3697e.vercel.app"
+        "https://music-app-frontend-pc8g-ciautrm86-omars-projects-b5a3697e.vercel.app",
+        "https://music-gen-demo-omars-projects-b5a3697e.vercel.app"
     ]
 
     app.add_middleware(
