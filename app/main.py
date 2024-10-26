@@ -1,20 +1,13 @@
 import os
-from alembic.config import Config
-from alembic import command
-from fastapi import FastAPI
-from routers import user, project
+from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import Response
+from routers import user, project
+import datetime
 
-# Añadir la ruta de la raíz del proyecto para permitir importaciones relativas
-
-os.environ["DATABASE_URL"] = "postgres://default:MbpU67rvGqKg@ep-green-credit-a4beru5o.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
-
-config = Config()
-config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
-config.set_section_option("alembic", "script_location", "alembic")
 app = FastAPI()
 
-
+# Configura las rutas del enrutador
 app.include_router(user.router, prefix="/api/users", tags=["users"])
 app.include_router(project.router, prefix="/api/projects", tags=["projects"])
 
@@ -25,10 +18,60 @@ origins = [
     # Agrega aquí cualquier otra variación necesaria
 ]
 
+# Configura CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,  # Permitir los orígenes especificados
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "OPTIONS", "PATCH", "DELETE", "POST", "PUT"],
+    allow_headers=[
+        "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length",
+        "Content-MD5", "Content-Type", "Date", "X-Api-Version"
+    ],
 )
+
+# Middleware para agregar encabezados CORS a las respuestas
+def add_cors_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+    response.headers["Access-Control-Allow-Headers"] = "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+    return response
+
+app.middleware('http')(add_cors_headers_middleware)
+
+# Handler para devolver la fecha y hora actual
+@app.api_route("/", methods=["GET", "OPTIONS", "PATCH", "DELETE", "POST", "PUT"])
+async def handler(request: Request):
+    if request.method == "OPTIONS":
+        return Response(status_code=200)
+    
+    # Devuelve la fecha y hora actual
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return Response(content=current_date)
+
+# Ejemplo de cómo consumirlo en el frontend
+# JavaScript (fetch API)
+# 
+# async function getCurrentDate() {
+#     try {
+#         const response = await fetch('http://localhost:8000/', {
+#             method: 'GET',
+#             headers: {
+#                 'Accept': 'application/json',
+#             },
+#             credentials: 'include'
+#         });
+#         if (response.ok) {
+#             const data = await response.text();
+#             console.log('Fecha y hora actual:', data);
+#         } else {
+#             console.error('Error en la solicitud:', response.status);
+#         }
+#     } catch (error) {
+#         console.error('Error en la solicitud:', error);
+#     }
+# }
+# 
+# getCurrentDate();
