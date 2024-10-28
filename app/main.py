@@ -9,10 +9,13 @@ from starlette.middleware.cors import CORSMiddleware
 
 os.environ["DATABASE_URL"] = "postgres://default:MbpU67rvGqKg@ep-green-credit-a4beru5o.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
 
-config = Config()
-config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
-config.set_section_option("alembic", "script_location", "alembic")
+
 app = FastAPI()
+
+origins = [
+    "https://music-app-frontend-pc8g.vercel.app",
+    "https://music-gen-demo-omars-projects-b5a3697e.vercel.app"
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,16 +25,6 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-
-async def add_cors_headers_middleware(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET,OPTIONS,PATCH,DELETE,POST,PUT"
-    response.headers["Access-Control-Allow-Headers"] = "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-    return response
-
-app.middleware('http')(add_cors_headers_middleware)
 
 app.include_router(user.router, prefix="/api/users", tags=["users"])
 app.include_router(project.router, prefix="/api/projects", tags=["projects"])
