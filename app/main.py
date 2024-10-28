@@ -12,22 +12,13 @@ app = FastAPI()
 # Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
-    # Permite cualquier subdominio de Vercel
-    allow_origin_regex="https://.*\.vercel\.app",
+    # URL exacta del frontend
+    allow_origins=["https://music-app-frontend-pc8g.vercel.app"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*"],  # Permitir todos los métodos HTTP
+    # Permitir solo los encabezados necesarios
     allow_headers=["Authorization", "Content-Type"],
 )
-
-# Middleware adicional para agregar encabezados CORS manualmente
-
-
-@app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "https://music-app-frontend-pc8g.vercel.app"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    return response
 
 # Middleware para logs de solicitudes y respuestas (opcional para depuración)
 
