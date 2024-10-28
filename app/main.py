@@ -1,6 +1,4 @@
 import os
-from alembic.config import Config
-from alembic import command
 from fastapi import FastAPI, Request
 from routers import user, project
 from fastapi.middleware.cors import CORSMiddleware
