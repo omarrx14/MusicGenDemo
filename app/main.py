@@ -19,8 +19,9 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type"],
 )
+
 
 async def add_cors_headers_middleware(request: Request, call_next):
     response = await call_next(request)
