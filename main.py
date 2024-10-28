@@ -1,6 +1,6 @@
 import os
 from fastapi import FastAPI, Request
-from routers import user, project
+from app.routers import user, project
 from fastapi.middleware.cors import CORSMiddleware
 
 # Configuración de la URL de la base de datos
