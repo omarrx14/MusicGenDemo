@@ -4,7 +4,6 @@ from routers import user, project
 from fastapi.middleware.cors import CORSMiddleware
 
 # Configuración de la URL de la base de datos
-os.environ["DATABASE_URL"] = "postgres://default:MbpU67rvGqKg@ep-green-credit-a4beru5o.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
 
 # Inicialización de la aplicación FastAPI
 app = FastAPI()
