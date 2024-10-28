@@ -44,3 +44,8 @@ async def log_request(request: Request, call_next):
 # Rutas de la aplicación
 app.include_router(user.router, prefix="/api/users", tags=["users"])
 app.include_router(project.router, prefix="/api/projects", tags=["projects"])
+
+
+@app.get("/")
+async def read_root():
+    return {"message": "API is running"}
