@@ -33,11 +33,6 @@ async def signup(user: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.options("/signup/")
-async def options_signup():
-    return {"status": "ok"}
-
-
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(
@@ -50,8 +45,3 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-@router.options("/token")
-async def options_token():
-    return {"status": "ok"}
