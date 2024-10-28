@@ -12,14 +12,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     # URL exacta del frontend
-    allow_origins=["https://music-app-frontend-pc8g.vercel.app"],
+    allow_origins=["music-app-frontend-pc8g.vercel.app"],
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos HTTP
-    # Permitir solo los encabezados necesarios
+    allow_methods=["*"],
     allow_headers=["Authorization", "Content-Type"],
 )
-
-# Middleware para logs de solicitudes y respuestas (opcional para depuración)
 
 
 @app.middleware("http")
@@ -37,3 +34,7 @@ app.include_router(project.router, prefix="/api/projects", tags=["projects"])
 @app.get("/")
 async def read_root():
     return {"message": "API is running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
