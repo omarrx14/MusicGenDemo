@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://musicdb_usga_user:0PZ0dKd8uJCHhIwOvmA5yasi6d3bqWeM@dpg-csfl8908fa8c739vnkhg-a/musicdb_usga
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 
